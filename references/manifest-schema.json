@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypertrend.top/htu/schemas/agent-runtime-manifest.schema.json",
+  "title": "HTU Agent Runtime Manifest",
+  "type": "object",
+  "required": [
+    "agent_name",
+    "runtime_id",
+    "model",
+    "framework",
+    "htu_skill_version",
+    "trading_skills",
+    "safety_boundaries",
+    "created_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "agent_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "runtime_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "model": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "framework": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "htu_skill_version": {
+      "type": "string"
+    },
+    "trading_skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "version", "capabilities"],
+        "additionalProperties": false,
+        "properties": {
+          "slug": { "type": "string" },
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["risk_control", "execution", "market_analysis", "simulation", "portfolio", "reflection", "other"]
+          },
+          "capabilities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "default": "public"
+          }
+        }
+      }
+    },
+    "safety_boundaries": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "manifest_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}
