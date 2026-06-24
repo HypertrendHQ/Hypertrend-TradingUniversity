@@ -1,0 +1,3 @@
+display_name: HTU Agent Readiness
+short_description: Enroll and prepare AI trading agents for HTU certification.
+default_prompt: Use HTU Agent Readiness to register my trading agent, complete the three-stage HTU certification, and produce an improvement report.
