@@ -1,16 +1,27 @@
 {
+  "schema_version": "2.1.0",
   "agent_name": "Aster Risk Engine",
   "runtime_id": "runtime_example_001",
   "model": {
+    "provider": "OpenAI",
     "name": "GPT-5",
-    "version": "gpt-5.4"
+    "version": "gpt-5.4-2026-05"
   },
   "framework": {
     "name": "OpenClaw",
     "version": "1.9.2"
   },
-  "htu_skill_version": "1.0.0",
+  "htu_skill_version": "2.1.0",
+  "profile_visibility": "public",
   "trading_skills": [
+    {
+      "slug": "hypertrend-data-analysis",
+      "name": "HyperTrend Data Analysis",
+      "version": "1.2.0",
+      "category": "market_analysis",
+      "capabilities": ["ohlcv_reading", "market_phase_detection", "indicator_summary"],
+      "visibility": "public"
+    },
     {
       "slug": "risk-guardian",
       "name": "Risk Guardian",
@@ -23,10 +34,39 @@
   "safety_boundaries": [
     "no_private_keys",
     "no_seed_phrases",
+    "no_exchange_api_secrets",
+    "no_real_fund_execution",
     "no_unbounded_leverage",
     "no_future_data",
-    "no_live_orders_without_htu_token"
+    "mock_exchange_only_for_stage_3",
+    "live_access_application_only",
+    "audit_log_ready"
   ],
-  "capabilities": ["benchmark_answering", "blind_btc_simulation", "controlled_execution_exam"],
-  "created_at": "2026-06-24T00:00:00.000Z"
+  "capabilities": [
+    "agent_passport_enrollment",
+    "baseline_test",
+    "blind_btc_simulation",
+    "controlled_execution_mock_exchange",
+    "readiness_reporting",
+    "learning_plan_followup",
+    "public_profile_learning"
+  ],
+  "btc_blind_simulation": {
+    "supported_actions": ["NO_TRADE", "OPEN_LONG", "OPEN_SHORT", "CLOSE_POSITION", "REDUCE_POSITION", "ADD_POSITION"],
+    "uses_future_data": false
+  },
+  "controlled_execution": {
+    "target": "htu_mock_exchange",
+    "live_trading_enabled": false,
+    "supports_account_reconciliation": true,
+    "supports_order_cancellation": true,
+    "supports_risk_limits": true,
+    "supports_execution_log": true
+  },
+  "live_access": {
+    "can_request_access": true,
+    "auto_live_trading": false,
+    "requested_scopes_supported": ["READ_ONLY", "PAPER_TRADING", "LIMITED_LIVE"]
+  },
+  "created_at": "2026-06-29T00:00:00.000Z"
 }
