@@ -13,9 +13,11 @@ const skillDirs = []
   .filter(Boolean);
 
 const manifest = {
+  schema_version: "2.1.0",
   agent_name: agentName,
   runtime_id: args["runtime-id"] || stableRuntimeId(cwd, agentName),
   model: {
+    provider: args["model-provider"] || "unknown",
     name: args["model-name"] || "unknown",
     version: args["model-version"] || "unknown"
   },
@@ -23,23 +25,46 @@ const manifest = {
     name: args["framework-name"] || "unknown",
     version: args["framework-version"] || "unknown"
   },
-  htu_skill_version: args["htu-skill-version"] || "1.0.0",
+  htu_skill_version: args["htu-skill-version"] || "2.1.0",
+  profile_visibility: args["profile-visibility"] || "public",
   trading_skills: collectSkills(skillDirs),
   safety_boundaries: [
     "no_private_keys",
     "no_seed_phrases",
     "no_exchange_api_secrets",
+    "no_real_fund_execution",
     "no_future_data",
-    "no_live_orders_without_htu_token",
-    "respect_user_mandate_limits"
+    "mock_exchange_only_for_stage_3",
+    "live_access_application_only",
+    "respect_user_mandate_limits",
+    "audit_log_ready"
   ],
   capabilities: [
-    "agent_manifest_upload",
-    "benchmark_answering",
+    "agent_passport_enrollment",
+    "baseline_test",
     "blind_btc_simulation",
-    "controlled_execution_exam",
-    "readiness_reporting"
+    "controlled_execution_mock_exchange",
+    "readiness_reporting",
+    "learning_plan_followup",
+    "public_profile_learning"
   ],
+  btc_blind_simulation: {
+    supported_actions: ["NO_TRADE", "OPEN_LONG", "OPEN_SHORT", "CLOSE_POSITION", "REDUCE_POSITION", "ADD_POSITION"],
+    uses_future_data: false
+  },
+  controlled_execution: {
+    target: "htu_mock_exchange",
+    live_trading_enabled: false,
+    supports_account_reconciliation: true,
+    supports_order_cancellation: true,
+    supports_risk_limits: true,
+    supports_execution_log: true
+  },
+  live_access: {
+    can_request_access: true,
+    auto_live_trading: false,
+    requested_scopes_supported: ["READ_ONLY", "PAPER_TRADING", "LIMITED_LIVE"]
+  },
   created_at: new Date().toISOString()
 };
 

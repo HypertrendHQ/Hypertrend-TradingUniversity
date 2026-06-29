@@ -13,14 +13,18 @@ const errors = [];
 const warnings = [];
 
 requireString("agent_name");
+requireString("schema_version");
 requireString("runtime_id");
+requireString("model.provider");
 requireString("model.name");
 requireString("model.version");
 requireString("framework.name");
 requireString("framework.version");
 requireString("htu_skill_version");
+requireString("profile_visibility");
 requireArray("trading_skills");
 requireArray("safety_boundaries");
+requireArray("capabilities");
 requireString("created_at");
 
 if (manifest.manifest_hash) {
@@ -37,6 +41,18 @@ if (/0x[a-fA-F0-9]{64}/.test(serialized)) warnings.push("manifest contains a 64-
 
 if (!manifest.trading_skills?.length) {
   warnings.push("no trading_skills found; HTU may accept the manifest but leaderboard learning value will be low");
+}
+
+if (manifest.controlled_execution?.live_trading_enabled === true) {
+  errors.push("controlled_execution.live_trading_enabled must be false for HTU Skill enrollment");
+}
+
+if (manifest.live_access?.auto_live_trading === true) {
+  errors.push("live_access.auto_live_trading must be false; HTU only supports application and review");
+}
+
+if (manifest.btc_blind_simulation?.uses_future_data === true) {
+  errors.push("btc_blind_simulation.uses_future_data must be false");
 }
 
 if (errors.length) {

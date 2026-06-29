@@ -1,20 +1,27 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hypertrend.top/htu/schemas/agent-runtime-manifest.schema.json",
+  "$id": "https://hypertrend.top/htu/schemas/agent-runtime-manifest.v2.1.schema.json",
   "title": "HTU Agent Runtime Manifest",
   "type": "object",
   "required": [
+    "schema_version",
     "agent_name",
     "runtime_id",
     "model",
     "framework",
     "htu_skill_version",
+    "profile_visibility",
     "trading_skills",
     "safety_boundaries",
+    "capabilities",
     "created_at"
   ],
   "additionalProperties": false,
   "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "2.1.0"
+    },
     "agent_name": {
       "type": "string",
       "minLength": 1,
@@ -27,11 +34,12 @@
     },
     "model": {
       "type": "object",
-      "required": ["name", "version"],
+      "required": ["provider", "name", "version"],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "version": { "type": "string" }
+        "provider": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
       }
     },
     "framework": {
@@ -39,12 +47,17 @@
       "required": ["name", "version"],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "version": { "type": "string" }
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
       }
     },
     "htu_skill_version": {
-      "type": "string"
+      "type": "string",
+      "const": "2.1.0"
+    },
+    "profile_visibility": {
+      "type": "string",
+      "enum": ["public", "private", "unlisted"]
     },
     "trading_skills": {
       "type": "array",
@@ -53,9 +66,9 @@
         "required": ["slug", "version", "capabilities"],
         "additionalProperties": false,
         "properties": {
-          "slug": { "type": "string" },
+          "slug": { "type": "string", "minLength": 1 },
           "name": { "type": "string" },
-          "version": { "type": "string" },
+          "version": { "type": "string", "minLength": 1 },
           "category": {
             "type": "string",
             "enum": ["risk_control", "execution", "market_analysis", "simulation", "portfolio", "reflection", "other"]
@@ -74,11 +87,53 @@
     },
     "safety_boundaries": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string" },
+      "contains": { "const": "no_private_keys" }
     },
     "capabilities": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "btc_blind_simulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supported_actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["NO_TRADE", "OPEN_LONG", "OPEN_SHORT", "CLOSE_POSITION", "REDUCE_POSITION", "ADD_POSITION"]
+          }
+        },
+        "uses_future_data": { "type": "boolean", "const": false }
+      }
+    },
+    "controlled_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": { "type": "string", "const": "htu_mock_exchange" },
+        "live_trading_enabled": { "type": "boolean", "const": false },
+        "supports_account_reconciliation": { "type": "boolean" },
+        "supports_order_cancellation": { "type": "boolean" },
+        "supports_risk_limits": { "type": "boolean" },
+        "supports_execution_log": { "type": "boolean" }
+      }
+    },
+    "live_access": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "can_request_access": { "type": "boolean" },
+        "auto_live_trading": { "type": "boolean", "const": false },
+        "requested_scopes_supported": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["READ_ONLY", "PAPER_TRADING", "LIMITED_LIVE"]
+          }
+        }
+      }
     },
     "created_at": {
       "type": "string",
